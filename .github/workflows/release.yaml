@@ -31,7 +31,6 @@ jobs:
       - name: Package and push the chart
         run: |
           v='${{ steps.v.outputs.version }}'
-          echo "${{ secrets.GITHUB_TOKEN }}" | docker run --rm -i -v "$PWD/charts:/c" -v "$PWD/out:/out" alpine/helm:3 sh -c \
-            "helm registry login ghcr.io -u '${{ github.actor }}' --password-stdin && \
-             helm package /c/paseo-workspaces --version $v --app-version $v -d /out && \
-             helm push /out/paseo-workspaces-$v.tgz oci://ghcr.io/${OWNER}/charts"
+          echo "${{ secrets.GITHUB_TOKEN }}" | helm registry login ghcr.io -u '${{ github.actor }}' --password-stdin
+          helm package charts/paseo-workspaces --version "$v" --app-version "$v" -d out
+          helm push "out/paseo-workspaces-$v.tgz" "oci://ghcr.io/${OWNER}/charts"
